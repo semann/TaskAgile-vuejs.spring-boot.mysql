@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites errors="0"
-            failures="0"
+<testsuites errors="1"
+            failures="1"
             tests="1">
 
   <testsuite name="login.e2e"
-    errors="0" failures="0" hostname="" id="" package="login.e2e" skipped="0"
-    tests="1" time="0.4960" timestamp="">
+    errors="1" failures="1" hostname="" id="" package="login.e2e" skipped="0"
+    tests="1" time="5.938" timestamp="">
   
-    <testcase name="login test" classname="login.e2e" time="0.4960" assertions="2">
+    <testcase name="login test" classname="login.e2e" time="5.938" assertions="2">
+
+      <failure message="Testing if element &lt;h1&gt; contains text &#39;TaskAgile&#39; in 5000ms - expected &#34;contains text &#39;TaskAgile&#39;&#34; but got: &#34;element could not be located&#34; (5177ms)">    at Object.login test (C:\Projects\Modern_Web_with_Spring5_VueJS2\TaskAgile\vuejs.spring-boot.mysql\front-end\tests\e2e\specs\login.e2e.js:6:15)
+    at processTicksAndRejections (internal/process/task_queues.js:93:5)</failure>
 
     
-
+    <error message="Error while running &#34;containsText&#34; command: Testing if element [0;33m&lt;h1&gt;[0m contains text [0;33m&#39;TaskAgile&#39;[0m in 5000ms - expected [0;32m&#34;contains text &#39;TaskAgile&#39;&#34;[0m but got: [0;31m&#34;element could not be located&#34;[0m [0;90m(5177ms)[0m" type="error"><![CDATA[
+        at Object.login test (C:\Projects\Modern_Web_with_Spring5_VueJS2\TaskAgile\vuejs.spring-boot.mysql\front-end\tests\e2e\specs\login.e2e.js:6:15)
+    at processTicksAndRejections (internal/process/task_queues.js:93:5)
+    ]]></error>
     
     </testcase>
   
 
+  
+    <system-err>
+        NoSuchElementError: An error occurred while running .getText() command on &lt;h1&gt;: 
+   {&#34;sessionId&#34;:&#34;4ed18118d172cd0116191564d50a0437&#34;,&#34;status&#34;:0,&#34;value&#34;:[]}
+       at processTicksAndRejections (internal/process/task_queues.js:93:5)
+    </system-err>
   
 
     
