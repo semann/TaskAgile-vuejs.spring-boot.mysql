@@ -56,7 +56,7 @@
 
 <script>
 // import { required, email, minLength, maxLength, alphaNum } from 'vuelidate/lib/validators'
-// import registrationService from '@/services/registration'
+import registrationService from '@/services/registration'
 
 export default {
   name: 'RegisterPage',
@@ -97,11 +97,11 @@ export default {
       //   return
       // }
 
-      // registrationService.register(this.form).then(() => {
-      //   this.$router.push({name: 'LoginPage'})
-      // }).catch((error) => {
-      //   this.errorMessage = 'Failed to register user. ' + error.message
-      // })
+      registrationService.register(this.form).then(() => {
+        this.$router.push({name: 'LoginPage'})
+      }).catch((error) => {
+        this.errorMessage = 'Failed to register user. ' + error.message
+      })
     }
   }
 }
