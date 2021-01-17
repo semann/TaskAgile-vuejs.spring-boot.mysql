@@ -2,11 +2,14 @@
 import RegisterPage from '@/views/RegisterPage'
 import { mount, createLocalVue } from '@vue/test-utils'
 import VueRouter from 'vue-router'
+import Vuelidate from 'vuelidate'
+import registrationService from '@/services/registration'
 
 // vm.$router 에 접근할 수 있도록
 // 테스트에 Vue Router 추가하기
 const localVue = createLocalVue()
 localVue.use(VueRouter)
+localVue.use(Vuelidate)
 const router = new VueRouter()
 
 // registrationService의 Mock
@@ -18,6 +21,7 @@ describe('RegisterPage.vue', () => {
   let fieldEmailAddress
   let fieldPassword
   let buttonSubmit
+  let registerSpy
 
   beforeEach(() => {
     wrapper = mount(RegisterPage, {
@@ -29,10 +33,24 @@ describe('RegisterPage.vue', () => {
     fieldEmailAddress = wrapper.find('#emailAddress')
     fieldPassword = wrapper.find('#password')
     buttonSubmit = wrapper.find('form button[type="submit"]')
+
+    //회원가입서비스를 위한 스파이 생성
+    registerSpy = jest.spyOn(registrationService, 'register')
+
+    const waitInterval = (timeInterval) => {
+      return new Promise( resolve => {
+        setTimeout(resolve, timeInterval)
+      })
+    }
   })
 
   afterAll(() => {
       jest.restoreAllMocks()
+  })
+
+  afterEach(() => {
+    registerSpy.mockReset()
+    registerSpy.mockRestore()
   })
 
   it('should render registration form', () => {
@@ -99,31 +117,64 @@ describe('RegisterPage.vue', () => {
   })
 
   it('should register when it is a new user', async () => {
+      expect.assertions(2)
       const stub = jest.fn()
       wrapper.vm.$router.push = stub
-    //   wrapper.vm.form.username = 'sunny'
-    //   wrapper.vm.form.emailAddress = 'sunny@local'
-    //   wrapper.vm.form.password = 'Jest!'
+      // wrapper.vm.form.username = 'sunny'
+      // wrapper.vm.form.emailAddress = 'sunny@local'
+      // wrapper.vm.form.password = 'Jest!'
       await wrapper.setData({
         form: {
             username: 'sunny',
-            emailAddress: 'sunny@local',
-            password: 'Jest!'
+            emailAddress: 'sunny@local.com',
+            password: 'Jest!123'
         }
       })
       wrapper.vm.submitForm()
+      expect(registerSpy).toBeCalled()
       wrapper.vm.$nextTick(() => {
           expect(stub).toHaveBeenCalledWith({name: 'LoginPage'})
       })
   })
 
-  it('should fail it is not a new user', () => {
+  it('should fail it is not a new user', async () => {
+      expect.assertions(2)
       // Mock에서는 오직 sunny@local만 새로운 사용자다.
-      wrapper.vm.form.emailAddress = 'ted@local'
+      // wrapper.vm.form.emailAddress = 'ted@local'
+      await wrapper.setData({
+        form: {
+            username: 'sunny',
+            emailAddress: 'ted@local.com',
+            password: 'Jest!123'
+        }
+      })
       expect(wrapper.find('.failed').isVisible()).toBe(false)
       wrapper.vm.submitForm()
+      expect(registerSpy).toBeCalled()
       wrapper.vm.$nextTick(null, () => {
           expect(wrapper.find('.failed').isVisible()).toBe(true)
       })
   })
+
+  it('should fail when the email address is invalid', () => {
+    // const spy = jest.spyOn(registrationService, 'register')
+    wrapper.vm.form.emailAddress = 'bad-email-address'
+    wrapper.vm.submitForm()
+    expect(registerSpy).not.toHaveBeenCalled()
+    // spy.mockReset()
+    // spy.mockRestore()
+  })
+
+  it('should fail when the username is invalid', () => {
+    wrapper.vm.form.username = 'bad-user-name#'
+    wrapper.vm.submitForm()
+    expect(registerSpy).not.toHaveBeenCalled()
+  })
+
+  it('should fail when the password is invalid', () => {
+    wrapper.vm.form.username = 'badpw'
+    wrapper.vm.submitForm()
+    expect(registerSpy).not.toHaveBeenCalled()
+  })
+
 })

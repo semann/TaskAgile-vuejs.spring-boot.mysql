@@ -25,4 +25,20 @@ describe('services/registration', () => {
             expect(data.result).toEqual('success')
         })
     })
+
+    it('should propagate the error to caller when request failed', () => {
+      expect.assertions(2)
+      moxios.wait(() => {
+        let request = moxios.requests.mostRecent()
+        expect(request).toBeTruthy()
+        request.reject({
+          status: 400,
+          response: {message: 'Bad request'}
+        })
+      })
+
+      return registrationService.register().catch(error => {
+        expect(error.response.message).toEqual('Bad request')
+      })
+    })
 })
